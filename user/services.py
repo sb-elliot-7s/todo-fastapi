@@ -10,8 +10,8 @@ class UserService:
         self._password_utils = password_utils
 
     async def _authenticate_user(self, username: str, password: str):
-        if any([not (user := await self._repo.get_user_by_username(username=username)),
-                not await self._password_utils.verify_password(plain_password=password, hashed_password=user.password)]):
+        if not (user := await self._repo.get_user_by_username(username=username)) \
+                or not await self._password_utils.verify_password(plain_password=password, hashed_password=user.password):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect username or password')
         return user
 
